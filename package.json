@@ -16,7 +16,7 @@
     "jquery": "^3.2.1",
     "jquery-paginate": "^1.0.1",
     "knex": "^0.21.0",
-    "morgan": "~1.8.1",
+    "morgan": "~1.9.1",
     "nodemailer": "*",
     "pg": "^8.0.3",
     "serve-favicon": "~2.4.2"
