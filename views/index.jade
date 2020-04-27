@@ -1,0 +1,81 @@
+extends layout
+
+block content
+  h1= title
+  div#datas
+    //- script(src='jquery.min.js')
+    //- script(src='jquery-paginate.min.js') 
+    //- script(src='/tableData.js', type='text/javascript', crossorigin="anonymous")
+    .container
+      div.form-group.col-sm-3.col-md-offset-9(align='right')
+        div.col-sm-3
+          label(for='project') Filter&nbsp;:
+        div.col-sm-9
+          select#project_filter.form-control
+            option(value='recent') Recent Projects
+            option(value='category') Order by Category
+            option(value='username') Order by username
+            option(value='project_title') Order by Project Title
+      table#myTable.table.table-responsive.table-bordered
+        thead
+          tr
+            th Project title
+            th Username
+            th Category name
+        tbody
+          each item in rows
+           tr
+             td #{item['project_name']}
+             td #{item['username']}
+             td #{item['category_name']}  
+    
+    script(type='text/javascript').
+      $('#myTable').paginate({
+      limit: 2, // 10 elements per page
+      initialPage: 0, // Start on second page
+      previous: true, // Show previous button
+      previousText: 'Prev', // Change previous button text
+      next: true, // Show previous button
+      nextText: 'Next', // Change next button text
+      first: true, // Show first button
+      firstText: 'First', // Change first button text
+      last: true, // Show last button
+      lastText: 'Last', // Change last button text
+      optional: false, // Always show the navigation menu
+      //onCreate: function(obj) { console.log('Pagination done!'); } // `onCreate` callback
+      //onSelect: function(obj, i) { console.log('Page ' + i + ' selected!'); } // `onSelect` callback
+      //childrenSelector: 'tbody > tr.ugly', // Paginate the rows with the `ugly` class
+      //navigationWrapper: $('div#myNavWrapper'), // Append the navigation menu to the `#myNavWrapper` div
+      //navigationClass: 'my-page-navigation', // New css class added to the navigation menu
+      //pageToText: function(i) { return (i + 1).toString(16); } // Page numbers will be shown on hexadecimal notation
+      });
+
+      $("#project_filter").change(function () {
+        let html = '';
+          var filterVal = $('#project_filter').val();
+            $.ajax({
+                type: "GET",
+                url: "/filter/" + filterVal
+            }).done((data) => {
+              html = `
+                <table class="table table-responsive table-bordered" id="myTable">
+                  <thead>
+                    <tr>
+                      <th>Project title</th>
+                      <th>Username</th>
+                      <th>Category name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                `;
+              data.map((result) => {
+                console.log(result.user_id);
+                html += `<tr><td>${result.project_name}</td><td>${result.username}</td><td>${result.category_name}</td></tr>`;
+                //- result.map((detail) => {
+                //-   console.log(details);
+                //- });
+              });
+              html +=`</tbody></table>`;
+              $('#myTable').html(html);
+          });     
+      });
